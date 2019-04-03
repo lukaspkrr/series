@@ -13,6 +13,9 @@ import {
             Modal 
         } from 'react-native';
 import firebase from 'firebase';
+
+import { firebaseConfig } from './../utils/firebaseConfig';
+
 import { connect } from 'react-redux';
 
 import { tryLogin, tryRegisterUser } from './../actions/userActions';
@@ -33,15 +36,7 @@ class LoginScreen extends React.Component{
     }
 
     componentDidMount() {
-        const config = {
-            apiKey: "[chave da API]",
-            authDomain: "[Dominio]",
-            databaseURL: "[URL do bd]",
-            projectId: "[id do projeto]",
-            storageBucket: "[nome  do bucket]",
-            messagingSenderId: "[sender id]"
-            };
-        firebase.initializeApp(config);
+        firebase.initializeApp(firebaseConfig);
     }
 
     OnChangeHandler(key, value) {
@@ -147,7 +142,7 @@ class LoginScreen extends React.Component{
                     color='#DB202C'
                     title='Entrar'
                     onPress={() => this.tryLogin()} />
-                    <Text style={styles.text}>──────── OU ────────</Text>
+                    <Text style={styles.text}>──────────────── OU ────────────────</Text>
                     <Button
                     color='#DB202C'
                     title='Cadastrar'
