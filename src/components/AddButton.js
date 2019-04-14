@@ -16,7 +16,7 @@ const AddButton = ({ onNavigation }) => {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        backgroundColor: '#DB202C',
+        backgroundColor: '#F95D6A',
         padding: 15,
         width: 60,
         height: 60,

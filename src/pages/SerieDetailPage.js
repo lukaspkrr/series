@@ -1,7 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableWithoutFeedback, LayoutAnimation, NativeModules } from 'react-native';
+import { View, 
+        Text, 
+        StyleSheet, 
+        Image, 
+        ScrollView, 
+        TouchableWithoutFeedback, 
+        LayoutAnimation, 
+        NativeModules, 
+        TouchableOpacity,
+        Alert } from 'react-native';
 
 import { LinearGradient } from 'expo';
+import { connect } from 'react-redux';
+import { deleteSerie } from './../actions';
+
+import { Ionicons } from '@expo/vector-icons';
+
 
 //Android
 NativeModules.UIManager.setLayoutAnimationEnabledExperimental && NativeModules.UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -26,17 +40,54 @@ class SerieDetailPage extends React.Component {
         LayoutAnimation.spring();
     }
 
+    delete(serie) {
+        Alert.alert(
+            'Deletar',
+            `Você realmente quer deletar a série ${serie.title}?`,
+            [{
+                text: 'Não',
+                style: 'cancel', //IOS
+                onPress: () => {}
+            },
+            {
+                text: 'Deletar',
+                onPress: () => this.tryDelete(serie)
+            }],
+            { cancelable: false }
+        )
+    }
+
+    tryDelete(serie) {
+        this.props.deleteSerie(serie)
+        .then(() => this.props.navigation.goBack())
+        .catch((e) => Alert.alert(
+            'Erro!',
+            e.message,
+            [{
+                text: 'OK',
+                style: 'cancel', //IOS
+                onPress: () => {}
+            }],
+            { cancelable: false }
+        ))
+    }
+
     render() {
-        const { serie } = this.props.navigation.state.params;
+        const { navigation } = this.props;
+        const { serie } = navigation.state.params;
         const { isExpanded } = this.state
         return (
             <ScrollView style={styles.container}>
                 <View>
-                    <Image 
+                {
+                (serie.img) 
+                    ? <Image 
                     source={{ uri: serie.img }} 
                     style={styles.image} />
+                    : null
+                }
                     <LinearGradient
-                    colors={['transparent', '#181818']}
+                    colors={['transparent', '#fff']}
                     style={styles.gradient} />
                 </View>
                 <View style={styles.inform}>
@@ -56,8 +107,33 @@ class SerieDetailPage extends React.Component {
                             styles.justify, 
                             isExpanded ? styles.isExpanded : styles.collapsed
                             ]}>{serie.description}</Text>
+                            <LinearGradient
+                            colors={['transparent', '#fff']}
+                            style={[styles.dropButton, isExpanded ? styles.isExpandedDrop : styles.collapsedDrop]}>
+                                {(!isExpanded) ?
+                                <Ionicons name="md-arrow-dropdown" size={25} color="#262626" />
+                                : null}
+                            </LinearGradient>
                     </View>
                 </TouchableWithoutFeedback>
+                </View>
+                <View style={styles.buttonView}>
+                    <TouchableOpacity
+                        style={[styles.button, styles.buttonOutline]}
+                        onPress={() => this.delete(serie)}>
+                            <Ionicons style={{marginRight: 10}} name="md-trash" size={25} color="#F95D6A" />
+                            <Text style={[styles.textButton, styles.textButtonOutline]}>
+                                Deletar 
+                            </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigation.navigate('SerieForm', { serieToEdit: serie})}>
+                            <Ionicons style={{marginRight: 10}} name="md-create" size={25} color="#fff" />
+                            <Text style={styles.textButton}> 
+                                Editar 
+                            </Text>
+                    </TouchableOpacity> 
                 </View>
                 </View>
             </ScrollView>
@@ -67,14 +143,14 @@ class SerieDetailPage extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#181818',
+        flex: 1,
     },
     image: {
         aspectRatio: 1
     },
     gradient: {
         position: 'absolute',
-        height: 150,
+        height: 50,
         width: '100%',
         bottom: 0
     },
@@ -82,8 +158,8 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     textStyle: {
-        color: '#fff',
-        fontSize: 18
+        color: '#262626',
+        fontSize: 17
     },
     titleStyle: {
         fontWeight: 'bold',
@@ -100,22 +176,63 @@ const styles = StyleSheet.create({
     },
     description: {
     paddingTop: 15,
+    paddingBottom: 20,
     },
     justify: { //IOS
         textAlign: 'justify',
     },
     collapsed: {
-        maxHeight: 65,
+        maxHeight: 75,
     },
     expanded: {
         flex: 1,
     },
     divider: {
-        backgroundColor: '#fff',
+        backgroundColor: '#262626',
         width: '100%',
         height: 1,
         marginTop: 5,
     },
+    button: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#F95D6A',
+        padding: 10,
+        borderRadius: 50,
+        elevation: 1,
+        minWidth: '40%',
+    },
+    textButton: {
+        fontSize: 20,
+        textAlign: 'center',
+        color: '#fff',
+    },
+    buttonOutline: {
+        backgroundColor: '#fff',
+        borderWidth: 2,
+        borderColor: '#F95D6A',
+    },
+    textButtonOutline: {
+        color: '#F95D6A',
+    },
+    buttonView: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    dropButton: {
+        width: '100%',  
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        position: 'absolute',
+        bottom: 0
+    },
+    isExpandedDrop:{
+        height: 0,
+    },
+    collapsedDrop:{
+        height: 100,
+    },
 });
 
-export default SerieDetailPage;
+export default connect(null, { deleteSerie })(SerieDetailPage);

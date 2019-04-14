@@ -10,11 +10,15 @@ const SerieCard = ({ serie, isFistCard, onNavigate }) => (
         ]}
          >
         <View style={styles.card}>
-        <Image 
-        source={{ uri: serie.img }} 
-        aspectRatio={1}
-        resizeMode='cover'
-        />
+        {
+            (serie.img) 
+                ? <Image 
+                source={{ uri: serie.img }} 
+                aspectRatio={1}
+                resizeMode='cover'
+                />
+                : null
+        }
         <View style={styles.cardTitleContainer}>
             <Text style={styles.cardTitle}> {serie.title} </Text>
         </View>
@@ -32,7 +36,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     cardTitleContainer: {
-        backgroundColor: 'rgba(24, 24, 24, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
         height: 50,
         position: 'absolute',
         bottom: 0,
@@ -40,7 +44,7 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     cardTitle: {
-        color: '#fff',
+        color: '#262626',
         fontSize: 15,
         fontWeight: 'bold',
 

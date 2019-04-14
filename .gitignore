@@ -6,4 +6,7 @@ npm-debug.*
 *.key
 *.mobileprovision
 
-src/utils/firebaseConfig.js
+#gitignore
+....
+firebaseConfig.js
+....

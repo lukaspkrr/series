@@ -10,7 +10,8 @@ import {
             ActivityIndicator, 
             Alert, 
             Keyboard,
-            Modal 
+            Modal ,
+            TouchableOpacity
         } from 'react-native';
 import firebase from 'firebase';
 
@@ -103,7 +104,7 @@ class LoginScreen extends React.Component{
         return <View style={styles.loader}>
         <ActivityIndicator
         size='large'
-        color='#DB202C' />
+        color='#F95D6A' />
         </View>
     }
 
@@ -117,14 +118,15 @@ class LoginScreen extends React.Component{
 
     render() {
         return (
-            <ImageBackground source={require('./../../assets/banner.jpg')} style={{width: '100%', height: '100%'}}>
+            <ImageBackground source={require('./../../assets/back.png')} style={{width: '100%', height: '100%'}}>
             <View style={styles.container}>
             { this.loader() }
             <View style={styles.formContainer}>
-            <Image style={styles.copyimage} source={require('./../../assets/copyflix.png')} />
+            <Image style={styles.copyimage} source={require('./../../assets/icon.png')} />
                 <View style={styles.form}>
                     <FormRow>
                         <TextInput style={styles.input} 
+                        selectionColor={'#F95D6A'}
                         value={this.state.mail}
                         onChangeText={value => this.OnChangeHandler('mail', value)}
                         placeholder='Email'
@@ -133,20 +135,18 @@ class LoginScreen extends React.Component{
                     </FormRow>
                     <FormRow>
                         <TextInput style={styles.input}
+                        selectionColor={'#F95D6A'}
                         value={this.state.password}
                         onChangeText={value => this.OnChangeHandler('password', value)}
                         placeholder='Senha'
                         secureTextEntry />
                     </FormRow>
-                    <Button
-                    color='#DB202C'
-                    title='Entrar'
-                    onPress={() => this.tryLogin()} />
-                    <Text style={styles.text}>──────────────── OU ────────────────</Text>
-                    <Button
-                    color='#DB202C'
-                    title='Cadastrar'
-                    onPress={() => this.showRegisterModal()} /> 
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => this.tryLogin()}
+                    >
+                    <Text style={styles.textButton}> Entrar </Text>
+                    </TouchableOpacity> 
                 </View>
             </View>
             {/* Modal */}
@@ -176,11 +176,11 @@ class LoginScreen extends React.Component{
                                 </FormRow>
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
                                     <Button
-                                    color='#000'
+                                    color='#262626'
                                     title='Cancelar'
                                     onPress={() => this.hideRegisterModal()} />
                                     <Button
-                                    color='#DB202C'
+                                    color='#F95D6A'
                                     title='Cadastrar'
                                     onPress={() => this.tryRegisterUser()} />
                                 </View>
@@ -190,6 +190,10 @@ class LoginScreen extends React.Component{
                 </View>   
             {/* Modal */}
             </View>
+            <View style={styles.footerButtons}>
+                    <TouchableOpacity onPress={() => this.showRegisterModal()}><Text style={styles.footerButtonsText}>Não possuo conta</Text></TouchableOpacity>
+                    <TouchableOpacity><Text style={styles.footerButtonsText}>Ajuda</Text></TouchableOpacity>
+                </View>
             </ImageBackground>
         )
     }
@@ -201,26 +205,41 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     input: {
+        textAlign: 'center',
         padding: 5,
-        backgroundColor: '#333',
-        marginBottom: 20,
-        borderRadius: 4,
+        fontSize: 20,
+        backgroundColor: 'rgba(255, 255, 255, .8)',
+        color: '#262626',
+        padding: 10,
+        borderWidth: .5,
+        borderColor: '#262626',
+        borderRadius: 50,
         elevation: 1,
-        color: '#fff'
     },
     copyimage: {
-        aspectRatio: 3,
+        aspectRatio: 1,
         alignSelf: 'center',
-        marginTop: 100,
-        marginBottom: 50,
+        marginTop: 50,
+        height: 200,
+        borderRadius: 100,
     },
     form: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
         marginTop: 30,
         paddingTop: 30,
         paddingBottom: 30,
         paddingRight: 10,
         paddingLeft: 10,
+    },
+    button: {
+        backgroundColor: '#F95D6A',
+        padding: 10,
+        borderRadius: 50,
+        elevation: 1,
+    },
+    textButton: {
+        fontSize: 20,
+        textAlign: 'center',
+        color: '#fff',
     },
     text: {
         color: '#fff',
@@ -243,22 +262,34 @@ const styles = StyleSheet.create({
     },
     registreTitle: {
         fontSize: 50,
-        color: '#DB202C',
+        color: '#262626',
         marginBottom: 30,
         alignSelf: 'center',
     },
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0 ,0.5)',
-        paddingRight: 10,
-        paddingLeft: 10,
+        backgroundColor: 'rgba(0, 0, 0 ,0.8)',
     },
     modalFormContainer: {
+        marginRight: 10,
+        marginLeft: 10,
         backgroundColor: '#fff', 
         padding: 15,
-        borderRadius: 5
+        borderRadius: 5,
     },
+    footerButtons: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-between',
+        position: 'absolute',
+        padding: 10,
+        bottom: 5,
+    },
+    footerButtonsText: {
+        textDecorationLine: 'underline',
+        color: 'rgba(38, 38, 38, .5)',
+    }
 })
 
 export default connect(null, { 

@@ -14,7 +14,7 @@ const store = createStore(rootReducer, composeWithDevTools(
 ));
 
 const SeriesApp = props => (
-  <Provider store={ store }>
+  <Provider store={ store } >
     <Router />
   </Provider>
 );

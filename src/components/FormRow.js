@@ -12,7 +12,7 @@ const FormRow = props => {
 
 const styles = StyleSheet.create({
     container: {
-        
+        paddingBottom: 15,
     }
 })
 

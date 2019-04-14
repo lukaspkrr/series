@@ -5,6 +5,12 @@ import SerieDetailPage from './pages/SerieDetailPage';
 import SerieFormPage from './pages/SerieFormPage';
 
 const AppNavigator = createStackNavigator({
+  'Login': {
+    screen: LoginScreen,
+    navigationOptions: {
+      header: null
+    }
+  },
   'Main': {
     screen: SeriesPage,
     navigationOptions: {
@@ -22,26 +28,27 @@ const AppNavigator = createStackNavigator({
   },
   'SerieForm': {
     screen: SerieFormPage,
-    navigationOptions: {
-        title: 'Serie Form'
+    navigationOptions: ({ navigation }) => {
+      if (navigation.state.params && navigation.state.params.serieToEdit) {
+        return {
+          title: navigation.state.params.serieToEdit.title
+        }
       }
-  },
-  'Login': {
-    screen: LoginScreen,
-    navigationOptions: {
-      header: null
+      return { title: 'Cadastro de série' }
     }
   },
 }, {
   defaultNavigationOptions: {
     title: 'Séries',
-    headerTintColor: '#fff',
+    headerTintColor: '#262626',
     headerStyle: {
-      backgroundColor: '#000'
+      backgroundColor: '#fff',
+      borderTopColor: '#fafafa',
+      borderTopWidth: 22,
     },
     headerTitleStyle: {
-      color: '#DB202C',
-      fontSize: 30
+      color: '#262626',
+      fontSize: 20,
     }
   }
 })
