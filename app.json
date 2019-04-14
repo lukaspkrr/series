@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Series",
+    "name": "Love Series",
     "slug": "series",
     "privacy": "public",
     "sdkVersion": "32.0.0",
@@ -23,7 +23,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lukaspkrr.loveseries"
+    },
+    "android": {
+      "package": "com.lukaspkrr.loveseries",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     }
   }
 }

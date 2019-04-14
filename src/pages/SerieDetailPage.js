@@ -25,8 +25,25 @@ class SerieDetailPage extends React.Component {
         super(props);
 
         this.state = {
+            stars: ['md-heart-empty','md-heart-empty','md-heart-empty','md-heart-empty','md-heart-empty'],
             isExpanded: false
         }
+    }
+    
+    selectStars(rate) {
+        let newState = [... this.state.stars]
+        const int = Math.trunc(rate);
+        const half = (rate - int)*10;
+            this.state.stars.forEach((e, i) => {
+               if (i < int) {
+                    newState[i] = 'md-heart';
+               } else if ((i === int) && (half !== 0)) {
+                    newState[i] =  'md-heart-half';
+               } else {
+                    newState[i] = 'md-heart-empty';
+               }
+            });
+        this.setState({stars: newState});
     }
 
     toggleExpanded() {
@@ -72,6 +89,10 @@ class SerieDetailPage extends React.Component {
         ))
     }
 
+    componentDidMount() {
+        this.selectStars(this.props.navigation.state.params.serie.rate);
+    }
+
     render() {
         const { navigation } = this.props;
         const { serie } = navigation.state.params;
@@ -82,9 +103,11 @@ class SerieDetailPage extends React.Component {
                 {
                 (serie.img) 
                     ? <Image 
-                    source={{ uri: serie.img }} 
+                    source={{ uri: `data:image/jpeg;base64,${serie.img}` }} 
                     style={styles.image} />
-                    : null
+                    : <Image 
+                    source={{ uri : 'https://www.compumaq.com.br/web/img/icone-sem-foto.jpg'}} 
+                    style={styles.image} />
                 }
                     <LinearGradient
                     colors={['transparent', '#fff']}
@@ -93,10 +116,14 @@ class SerieDetailPage extends React.Component {
                 <View style={styles.inform}>
                 <Text style={[styles.textStyle, styles.titleStyle, styles.serieTitle]}>{serie.title}</Text>
                 <Text style={[styles.textStyle, styles.serieGender]}>{serie.gender}</Text>
-                <View style={styles.rate}>
-                <Text style={[styles.textStyle, styles.titleStyle]}>Nota: </Text>
-                <Text style={styles.textStyle}>{serie.rate}</Text>
-                </View>
+                <View style={styles.nota}>
+                            <Text style={[styles.textStyle, styles.titleStyle, {paddingRight: 10}]}>Nota:</Text>
+                            <Ionicons name={this.state.stars[0]} size={20} color="#F95D6A" />
+                            <Ionicons name={this.state.stars[1]} size={20} color="#F95D6A" />
+                            <Ionicons name={this.state.stars[2]} size={20} color="#F95D6A" />
+                            <Ionicons name={this.state.stars[3]} size={20} color="#F95D6A" />
+                            <Ionicons name={this.state.stars[4]} size={20} color="#F95D6A" />
+                        </View>
                 <View style={styles.divider}></View>
                 <View style={styles.description}>
                 <Text style={[styles.textStyle, styles.titleStyle]}>Descrição</Text>
@@ -167,7 +194,7 @@ const styles = StyleSheet.create({
     serieTitle: {
         fontSize: 30,
     },
-    rate: {
+    nota: {
         flexDirection: 'row',
         paddingTop: 15,
     },

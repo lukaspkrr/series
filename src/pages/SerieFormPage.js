@@ -9,7 +9,9 @@ import { View,
         KeyboardAvoidingView, 
         ActivityIndicator, 
         Alert,
-        TouchableOpacity
+        TouchableOpacity,
+        Image,
+        LayoutAnimation, 
     } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -18,6 +20,7 @@ import { setField, saveSerie, setWholeSerie, clearField } from './../actions';
 import FormRow from '../components/FormRow';
 
 import { Ionicons } from '@expo/vector-icons';
+import { Permissions, ImagePicker } from 'expo';
 
 class SerieFormPage extends React.Component {
     constructor(props) {
@@ -25,8 +28,18 @@ class SerieFormPage extends React.Component {
 
         this.state = {
             stars: ['md-heart-empty','md-heart-empty','md-heart-empty','md-heart-empty','md-heart-empty'],
-            isLoading: false
+            isLoading: false,
+            imageConfig: {
+                quality: 0.2,
+                base64: true,
+                allowsEditing: true,
+                aspect: [1, 1],
+            } 
         }
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        LayoutAnimation.spring();
     }
 
     selectStars(rate) {
@@ -65,6 +78,39 @@ class SerieFormPage extends React.Component {
         }
     }
 
+    async pickCameraImage() {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA);
+        if (status !== 'granted') {
+            Alert.alert('Sem acesso :(', 'Para podermos ter acesso a sua câmera você precisa permitir o acesso.', [{text: 'OK', style: 'cancel'}], { cancelable: false })
+            return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync(this.state.imageConfig);
+
+        if (!result.cancelled) {
+            this.saveImage(result.base64);
+        }
+    }
+
+    async pickInternalImage() {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status !== 'granted') {
+            Alert.alert('Sem acesso :(', 'Para podermos ter acesso as suas imagens você precisa permitir o acesso.', [{text: 'OK', style: 'cancel'}], { cancelable: false })
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync(this.state.imageConfig);
+
+        if (!result.cancelled) {
+            this.saveImage(result.base64);
+        }
+    }
+
+    saveImage(image) {
+        this.props.setField('img', image);
+    }
+
+
     render() {
         const { serieForm, setField, saveSerie, navigation } = this.props;
 
@@ -97,12 +143,27 @@ class SerieFormPage extends React.Component {
                         onChangeText={value => setField('title', value)} />
                     </FormRow>
                     <FormRow >
-                        <TextInput
-                        selectionColor={'#F95D6A'}
-                        style={styles.input}
-                        placeholder='URL da imagem'
-                        value={serieForm.img}
-                        onChangeText={value => setField('img', value)} />
+                        <View><Text style={[styles.text, styles.imageText]} >Selecione uma imagem: </Text></View>
+                        {
+                        (serieForm.img) 
+                            ? <Image 
+                                source={{ uri: `data:image/jpeg;base64,${serieForm.img}` }}
+                                style={styles.image}
+                            /> 
+                            : null 
+                        }
+                        <View style={styles.buttonView}>
+                            <TouchableOpacity
+                                style={[styles.button, styles.imageButton]}
+                                onPress={() => this.pickCameraImage()}>
+                                    <Ionicons name="md-camera" size={35} color="#fff" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.button, styles.imageButton]}
+                                onPress={() => this.pickInternalImage()}>
+                                    <Ionicons name="md-images" size={35} color="#fff" />
+                            </TouchableOpacity> 
+                        </View>
                     </FormRow>
                     <FormRow>
                         <View
@@ -189,6 +250,9 @@ const styles = StyleSheet.create({
         color: '#262626',
         paddingRight: 10,
     },
+    imageText: {
+        marginBottom: 10,
+    },
     loader: {
         flex: 1,
         justifyContent: 'center',
@@ -205,13 +269,28 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 50,
         elevation: 1,
-        marginBottom: 15,
+        marginBottom: 10,
+    },
+    imageButton: {
+        alignItems: 'center',
+        borderRadius: 10,
+        minWidth: '40%',
     },
     textButton: {
         fontSize: 20,
         textAlign: 'center',
         color: '#fff',
     },
+    buttonView: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    image: {
+        aspectRatio: 1,
+        width: '100%',
+        marginBottom: 10,
+    }
 });
 
 const mapStateToProps = (state) => ({

@@ -13,11 +13,15 @@ const SerieCard = ({ serie, isFistCard, onNavigate }) => (
         {
             (serie.img) 
                 ? <Image 
-                source={{ uri: serie.img }} 
+                source={{ uri: `data:image/jpeg;base64,${serie.img}` }} 
                 aspectRatio={1}
                 resizeMode='cover'
                 />
-                : null
+                : <Image 
+                source={{ uri : 'https://www.compumaq.com.br/web/img/icone-sem-foto.jpg'}} 
+                aspectRatio={1}
+                resizeMode='cover'
+                />
         }
         <View style={styles.cardTitleContainer}>
             <Text style={styles.cardTitle}> {serie.title} </Text>
